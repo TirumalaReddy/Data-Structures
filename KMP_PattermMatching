@@ -1,0 +1,60 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+int* computeLSP(char pattern[]) {
+	int* LSP,i=1;
+	int size, len=0;
+	LSP = (int*) malloc(strlen(pattern)*sizeof(int));
+	size = strlen(pattern);
+	LSP[0] = 0;
+	while (i< size) {
+		if (pattern[len] == pattern[i]) {
+			len ++;
+			LSP[i] = len;
+			i++;
+		} else if (len !=0) {
+			len = LSP[len -1];
+		} else {
+			LSP[i] = 0;
+			i++;
+		}
+	}
+	return LSP;
+}
+void findPattern(char* 	pattern, char* text, int* LSP) {
+	int i=0, m, n, j=0;
+	m = strlen(pattern);
+	n = strlen(text);
+	while (i<n) {
+		if (pattern[j] == text[i]) {
+			j++;
+			i++;
+		}
+		if(j == m) {
+			printf("%s found at index %d\n", pattern, i-j);
+			j = LSP[j-1];
+		}
+		if (j > 0 && pattern[j] != text[i]) {
+			j = LSP[j-1];
+		} else if (pattern[j] != text[i] && i <n) {
+			i++;
+		}
+	}
+}
+
+int main(void) {
+	char *pattern, *text;
+	int* LSP, i = 0, j;
+	pattern = (char*) malloc(sizeof(char)*4);
+	text = (char*) malloc(sizeof(char)*6);
+	scanf("%s %s", pattern, text);
+	LSP = computeLSP(pattern);
+	j = sizeof(LSP);
+	printf("LSP array\n");
+	for (;i<j; i++) {
+		printf("%d ", LSP[i]);
+	}
+	printf("\n");
+	findPattern(pattern, text, LSP);
+	return 0;
+}
